@@ -1,18 +1,27 @@
 import { NextResponse } from 'next/server';
 import { supabaseRoute } from '@/lib/supabase/server';
-
+import { getEnabledFeatures } from '@/lib/features/flags';
+import { getUserPermissions } from '@/lib/permissions/check';
+import { getEnvironment } from '@/lib/config/environment';
+import { isMaintenanceMode } from '@/lib/operations/flags';
 
 type BootstrapResponse = {
   ok: true;
   user: { id: string; email: string | null } | null;
   account: { id: string; name: string } | null;
   role: string | null;
+  permissions: string[];
+  features: Record<string, boolean>;
   entitlements: {
     plan_tier: string;
     features: Record<string, any>;
     limits: Record<string, any>;
     overrides: Record<string, any>;
   } | null;
+  system: {
+    maintenance_mode: boolean;
+    environment: string;
+  };
 };
 
 export async function POST() {
@@ -34,7 +43,13 @@ export async function POST() {
       user: null,
       account: null,
       role: null,
-      entitlements: null
+      permissions: [],
+      features: getEnabledFeatures(null, null, null),
+      entitlements: null,
+      system: {
+        maintenance_mode: isMaintenanceMode(),
+        environment: getEnvironment()
+      }
     };
     return NextResponse.json(res);
   }
@@ -57,7 +72,13 @@ export async function POST() {
       user: { id: user.id, email: user.email ?? null },
       account: null,
       role: null,
-      entitlements: null
+      permissions: [],
+      features: getEnabledFeatures({ id: user.id, email: user.email }, null, null),
+      entitlements: null,
+      system: {
+        maintenance_mode: isMaintenanceMode(),
+        environment: getEnvironment()
+      }
     };
     return NextResponse.json(res);
   }
@@ -84,24 +105,36 @@ export async function POST() {
     return NextResponse.json({ ok: false, error: entErr.message }, { status: 500 });
   }
 
+  const entitlements = ent
+    ? {
+        plan_tier: ent.plan_tier,
+        features: (ent.features ?? {}) as any,
+        limits: (ent.limits ?? {}) as any,
+        overrides: (ent.overrides ?? {}) as any
+      }
+    : {
+        plan_tier: 'free',
+        features: {},
+        limits: {},
+        overrides: {}
+      };
+
+  const userObj = { id: user.id, email: user.email ?? null };
+  const accountObj = { id: acct.id, name: acct.name };
+  const role = membership.role ?? null;
+
   const res: BootstrapResponse = {
     ok: true,
-    user: { id: user.id, email: user.email ?? null },
-    account: { id: acct.id, name: acct.name },
-    role: membership.role ?? null,
-    entitlements: ent
-      ? {
-          plan_tier: ent.plan_tier,
-          features: (ent.features ?? {}) as any,
-          limits: (ent.limits ?? {}) as any,
-          overrides: (ent.overrides ?? {}) as any
-        }
-      : {
-          plan_tier: 'free',
-          features: {},
-          limits: {},
-          overrides: {}
-        }
+    user: userObj,
+    account: accountObj,
+    role: role,
+    permissions: getUserPermissions(role),
+    features: getEnabledFeatures(userObj, accountObj, entitlements),
+    entitlements: entitlements,
+    system: {
+      maintenance_mode: isMaintenanceMode(),
+      environment: getEnvironment()
+    }
   };
 
   return NextResponse.json(res);

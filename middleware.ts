@@ -1,11 +1,44 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { signToken, verifyToken } from '@/lib/auth/session';
+import { isMaintenanceMode, getRateLimitConfig, getRateLimiter, isRequestLoggingEnabled } from '@/lib/operations/flags';
 
 const protectedRoutes = '/dashboard';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // Log request if enabled
+  if (isRequestLoggingEnabled()) {
+    console.log(`[${new Date().toISOString()}] ${request.method} ${pathname}`);
+  }
+  
+  // Check maintenance mode (bypass for health checks)
+  if (isMaintenanceMode() && pathname !== '/api/health') {
+    return NextResponse.json(
+      { 
+        ok: false, 
+        error: 'Service temporarily unavailable for maintenance',
+        maintenance_mode: true 
+      },
+      { status: 503 }
+    );
+  }
+  
+  // Apply rate limiting
+  const rateLimitConfig = getRateLimitConfig();
+  if (rateLimitConfig.enabled) {
+    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+    const rateLimiter = getRateLimiter();
+    
+    if (!rateLimiter.isAllowed(ip, rateLimitConfig.requestsPerMinute, rateLimitConfig.windowMs)) {
+      return NextResponse.json(
+        { ok: false, error: 'Rate limit exceeded', retry_after: 60 },
+        { status: 429 }
+      );
+    }
+  }
+  
   const sessionCookie = request.cookies.get('session');
   const isProtectedRoute = pathname.startsWith(protectedRoutes);
 
