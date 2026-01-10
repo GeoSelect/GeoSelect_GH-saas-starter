@@ -9,12 +9,18 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - Marketing landing page (`/`) with animated Terminal element
 - Pricing page (`/pricing`) which connects to Stripe Checkout
 - Dashboard pages with CRUD operations on users/teams
-- Basic RBAC with Owner and Member roles
+- **Comprehensive Flag Management System**
+  - Feature flags with rollout controls
+  - Environment-specific configuration
+  - Operational flags (maintenance mode, rate limiting)
+  - Role-based permission system (RBAC)
+- Basic RBAC with Owner, Admin, Member, and Viewer roles
 - Subscription management with Stripe Customer Portal
 - Email/password authentication with JWTs stored to cookies
 - Global middleware to protect logged-in routes
 - Local middleware to protect Server Actions or validate Zod schemas
 - Activity logging system for any user events
+- Bootstrap endpoint with user context, permissions, and features
 
 ## Tech Stack
 
@@ -107,6 +113,88 @@ In your Vercel project settings (or during deployment), add all the necessary en
 3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
 4. `POSTGRES_URL`: Set this to your production database URL.
 5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
+
+### Environment Variables
+
+The application supports the following environment variables:
+
+#### Core Configuration
+```bash
+POSTGRES_URL=postgresql://***
+STRIPE_SECRET_KEY=sk_test_***
+STRIPE_WEBHOOK_SECRET=whsec_***
+BASE_URL=http://localhost:3000
+AUTH_SECRET=***
+```
+
+#### Environment Configuration
+```bash
+ENVIRONMENT=development  # development | production | staging | test
+ENABLE_DEBUG_LOGS=true
+ENABLE_EXPERIMENTAL_FEATURES=false
+ENABLE_ANALYTICS=true
+```
+
+#### Operational Flags
+```bash
+MAINTENANCE_MODE=false
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_REQUESTS_PER_MINUTE=100
+CIRCUIT_BREAKER_THRESHOLD=5
+CIRCUIT_BREAKER_TIMEOUT=60000
+CIRCUIT_BREAKER_RESET_TIMEOUT=30000
+ENABLE_REQUEST_LOGGING=false
+```
+
+#### Health Check Configuration
+```bash
+HEALTH_CHECK_INTERVAL=30000
+HEALTH_CHECK_TIMEOUT=5000
+```
+
+See `.env.example` for the complete list of environment variables.
+
+## Flag Management System
+
+This starter includes a comprehensive flag management system. See [docs/FLAGS.md](docs/FLAGS.md) for detailed documentation on:
+
+- **Feature Flags**: Control feature availability with rollout percentages and entitlement-based access
+- **Environment Configuration**: Environment-specific behavior for development, staging, and production
+- **Operational Flags**: Runtime controls for maintenance mode, rate limiting, and circuit breakers
+- **Permission System**: Role-based access control with explicit permissions
+
+### Quick Example
+
+```typescript
+import { isFeatureEnabled } from '@/lib/features/flags';
+import { hasPermission, PERMISSIONS } from '@/lib/permissions';
+
+// Check if feature is enabled for user
+if (isFeatureEnabled('ENABLE_AI_ASSISTANT', user, account, entitlements)) {
+  // Show AI assistant
+}
+
+// Check if user has permission
+if (hasPermission(user, PERMISSIONS.MANAGE_BILLING, role)) {
+  // Allow billing management
+}
+```
+
+## Testing
+
+The application includes comprehensive test coverage:
+
+```bash
+npm test
+```
+
+Test files include:
+- Permission system tests
+- Feature flag evaluation tests
+- Bootstrap endpoint tests
+- Operational flags tests
+- Account access control tests
+- Environment configuration tests
 
 ## Other Templates
 
