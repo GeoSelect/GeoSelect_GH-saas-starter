@@ -233,12 +233,13 @@ This executive summary provides:
 
 | Document | Size | Lines | Topics | Examples |
 |----------|------|-------|--------|----------|
-| SUMMARY | 9.4KB | 360 | 14 | 3 |
-| README | 7.9KB | 320 | 11 | 3 |
-| ANALYSIS | 12KB | 480 | 16 | 0 |
+| SUMMARY | 9.4KB | 370 | 14 | 3 |
+| README | 7.9KB | 324 | 11 | 3 |
+| ANALYSIS | 12KB | 393 | 16 | 0 |
 | EXAMPLES | 15KB | 600 | 7 | 14 |
-| DIAGRAMS | 32KB | 1280 | 8 | 7 diagrams |
-| **TOTAL** | **76KB** | **3040** | **56** | **17** |
+| DIAGRAMS | 32KB | 427 | 8 | 7 diagrams |
+| INDEX | 11KB | 389 | 12 | 0 |
+| **TOTAL** | **87KB** | **2503** | **68** | **17** |
 
 ---
 
@@ -373,11 +374,11 @@ Can't find what you're looking for?
 
 This documentation suite provides:
 
-- ✅ **76KB** of comprehensive documentation
-- ✅ **5 specialized documents** for different needs
+- ✅ **87KB** of comprehensive documentation
+- ✅ **6 specialized documents** for different needs
 - ✅ **17 working examples** you can copy and use
 - ✅ **7 visual diagrams** for architecture understanding
-- ✅ **56 topics** covered in depth
+- ✅ **68 topics** covered in depth
 - ✅ **4 learning paths** for different goals
 
 Everything you need to understand, use, extend, and maintain the Parcel Preview CCP system.

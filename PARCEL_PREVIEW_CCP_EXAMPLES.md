@@ -427,8 +427,11 @@ export const ccp03Fixture = [
   },
 ];
 
-// Use in tests with relative import from test files
+// Use in tests from __tests__/ directory
 import { ccp03Fixture } from '../lib/contracts/ccp03.fixture';
+
+// Or from API route tests
+import { ccp03Fixture } from '../../../../lib/contracts/ccp03.fixture';
 
 const testParcel = ccp03Fixture[0];
 console.log(testParcel);
