@@ -417,7 +417,7 @@ describe('Report Creation API', () => {
 ### Example 12: Test Fixtures
 
 ```typescript
-// lib/contracts/ccp03.fixture.ts
+// Fixture definition in lib/contracts/ccp03.fixture.ts
 export const ccp03Fixture = [
   {
     id: '1',
@@ -427,8 +427,8 @@ export const ccp03Fixture = [
   },
 ];
 
-// Use in tests
-import { ccp03Fixture } from './lib/contracts/ccp03.fixture';
+// Use in tests with relative import from test files
+import { ccp03Fixture } from '../lib/contracts/ccp03.fixture';
 
 const testParcel = ccp03Fixture[0];
 console.log(testParcel);

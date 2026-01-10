@@ -213,6 +213,7 @@ lib/contracts/
 ├── parcel-to-report.ts    # Transformer (45 lines)
 ├── report.schema.ts       # Report structure (70 lines)
 └── auditEvent.schema.ts   # Audit events (35 lines)
+Total: 184 lines
 
 app/api/report/create/
 ├── route.ts               # API handler (98 lines)
@@ -221,6 +222,7 @@ app/api/report/create/
 __tests__/
 ├── ccp03.report.test.ts   # Parser tests (13 lines)
 └── report.create.test.ts  # Integration tests (50 lines)
+Total test lines: 126 (13 + 50 + 63)
 ```
 
 ### Dependencies
@@ -327,7 +329,7 @@ Based on code comments:
 
 I've created **4 comprehensive documentation files**:
 
-1. **PARCEL_PREVIEW_CCP_README.md** (This file)
+1. **PARCEL_PREVIEW_CCP_SUMMARY.md** (This file)
    - Executive summary and quick start
 
 2. **PARCEL_PREVIEW_CCP_ANALYSIS.md** (46KB)
