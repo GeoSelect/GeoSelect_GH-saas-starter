@@ -98,6 +98,12 @@ export function getEnabledFeatures(
 
 /**
  * Simple string hash function for consistent user-based rollouts
+ * 
+ * Note: This is a basic hash function suitable for feature rollout distribution.
+ * It provides adequate distribution for most use cases. For cryptographic purposes,
+ * use a proper cryptographic hash function instead.
+ * 
+ * Expected collision rate: Low for typical user ID patterns (UUIDs, incremental IDs)
  */
 function hashString(str: string): number {
   let hash = 0;

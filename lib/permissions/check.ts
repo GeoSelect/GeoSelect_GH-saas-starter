@@ -118,6 +118,12 @@ export function getAccountRole(
 /**
  * Check if user can perform an action on a resource
  * 
+ * Note: This is a basic implementation. For production use with resource-level
+ * access control, you should:
+ * 1. Fetch the user's memberships from the database
+ * 2. Verify the account_id matches one of their memberships
+ * 3. Check the role for that specific account
+ * 
  * @param user - User object
  * @param permission - Required permission
  * @param resource - Resource being accessed (with account context)
@@ -139,10 +145,11 @@ export function canPerformAction(
     return false;
   }
   
-  // If resource has account context, verify access
+  // Resource-level access control would be implemented here
+  // For now, if they have the permission, they can perform the action
+  // In production, you'd verify the user has access to resource.account_id
   if (resource?.account_id) {
-    // In a real implementation, you'd check memberships here
-    // For now, assume if they have the permission, they have access
+    // Placeholder: In real implementation, verify account membership
     return true;
   }
   

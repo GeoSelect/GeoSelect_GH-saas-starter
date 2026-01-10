@@ -28,7 +28,12 @@ export async function middleware(request: NextRequest) {
   // Apply rate limiting
   const rateLimitConfig = getRateLimitConfig();
   if (rateLimitConfig.enabled) {
-    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+    // Extract IP, handling x-forwarded-for with multiple IPs (use first/original client IP)
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const ip = forwardedFor 
+      ? forwardedFor.split(',')[0].trim() 
+      : request.ip || 'unknown';
+    
     const rateLimiter = getRateLimiter();
     
     if (!rateLimiter.isAllowed(ip, rateLimitConfig.requestsPerMinute, rateLimitConfig.windowMs)) {

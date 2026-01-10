@@ -98,6 +98,7 @@ export function getOperationalConfig() {
  */
 class InMemoryRateLimiter {
   private requests: Map<string, number[]> = new Map();
+  private cleanupIntervalId: NodeJS.Timeout | null = null;
   
   /**
    * Check if request is allowed
@@ -140,6 +141,34 @@ class InMemoryRateLimiter {
       }
     }
   }
+  
+  /**
+   * Start automatic cleanup interval
+   */
+  startCleanup(windowMs: number): void {
+    if (this.cleanupIntervalId) return;
+    
+    if (typeof setInterval !== 'undefined') {
+      this.cleanupIntervalId = setInterval(() => {
+        this.cleanup(windowMs);
+      }, 5 * 60 * 1000); // Cleanup every 5 minutes
+      
+      // Allow Node.js to exit even if this interval is active
+      if (this.cleanupIntervalId.unref) {
+        this.cleanupIntervalId.unref();
+      }
+    }
+  }
+  
+  /**
+   * Stop automatic cleanup
+   */
+  stopCleanup(): void {
+    if (this.cleanupIntervalId) {
+      clearInterval(this.cleanupIntervalId);
+      this.cleanupIntervalId = null;
+    }
+  }
 }
 
 // Global rate limiter instance
@@ -151,14 +180,8 @@ let rateLimiter: InMemoryRateLimiter | null = null;
 export function getRateLimiter(): InMemoryRateLimiter {
   if (!rateLimiter) {
     rateLimiter = new InMemoryRateLimiter();
-    
-    // Cleanup every 5 minutes
-    if (typeof setInterval !== 'undefined') {
-      setInterval(() => {
-        const config = getRateLimitConfig();
-        rateLimiter?.cleanup(config.windowMs);
-      }, 5 * 60 * 1000);
-    }
+    const config = getRateLimitConfig();
+    rateLimiter.startCleanup(config.windowMs);
   }
   
   return rateLimiter;
