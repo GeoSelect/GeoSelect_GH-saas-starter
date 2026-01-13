@@ -15,6 +15,10 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - Global middleware to protect logged-in routes
 - Local middleware to protect Server Actions or validate Zod schemas
 - Activity logging system for any user events
+- **Coordinated Contract Patterns (CCPs)** for stable API contracts
+  - CCP-00: Account Bootstrap (session initialization)
+  - CCP-01: Location Resolution (geographic data)
+  - CCP-03: Parcel Preview / Report Creation (structured reports)
 
 ## Tech Stack
 
@@ -107,6 +111,26 @@ In your Vercel project settings (or during deployment), add all the necessary en
 3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
 4. `POSTGRES_URL`: Set this to your production database URL.
 5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
+6. `CORS_ALLOWED_ORIGINS`: Configure allowed origins for API endpoints (e.g., `https://yourdomain.com` or `*` for development).
+
+## Documentation
+
+- [Coordinated Contract Patterns (CCP) Overview](./docs/CCP_OVERVIEW.md) - Overview of all CCPs
+- [Parcel Preview CCP Documentation](./docs/PARCEL_PREVIEW_CCP.md) - Complete guide to CCP-03 (Report Creation)
+
+## Testing
+
+Run tests with:
+
+```bash
+pnpm test
+```
+
+The test suite includes:
+- Unit tests for contract logic
+- Integration tests for API endpoints
+- Frozen contract verification tests
+- Audit event tracking tests
 
 ## Other Templates
 
